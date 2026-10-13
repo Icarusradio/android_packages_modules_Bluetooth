@@ -637,7 +637,11 @@ extern uint8_t L2CA_SetTraceLevel(uint8_t trace_level);
  * Returns      Number of buffers left queued for that CID
  *
  ******************************************************************************/
-extern uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush);
+// is_a2dp_media enables the device-specific Enhanced Flush policy. It never
+// skips host queue/completion/congestion handling and defaults off for callers
+// outside A2DP/AVDTP audio media channels.
+extern uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush,
+                                  bool is_a2dp_media = false);
 
 /*******************************************************************************
  *

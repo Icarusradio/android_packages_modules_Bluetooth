@@ -1681,7 +1681,8 @@ bool L2CA_SetChnlFlushability(uint16_t cid, bool is_flushable) {
  * Returns      Number of buffers left queued for that CID
  *
  ******************************************************************************/
-uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush) {
+uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush,
+                           bool is_a2dp_media) {
   if (bluetooth::shim::is_gd_l2cap_enabled()) {
     return bluetooth::shim::L2CA_FlushChannel(lcid, num_to_flush);
   }
@@ -1719,8 +1720,21 @@ uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush) {
        * controller */
       if (controller->supports_non_flushable_pb() &&
           (BTM_GetNumScoLinks() == 0)) {
-        /* The only packet type defined - 0 - Automatically-Flushable Only */
-        btsnd_hcic_enhanced_flush(p_lcb->Handle(), 0);
+        // This device can stop receiving HCI after an A2DP Enhanced Flush.
+        // Always skip the controller command for its audio media.
+        // All host queues and completion/congestion callbacks below still run.
+        const bool skip_enhanced_flush =
+            is_a2dp_media &&
+            bluetooth::os::GetSystemProperty("ro.product.device") ==
+                "mediapadm5lte";
+        if (is_a2dp_media) {
+          LOG_INFO("A2DP Enhanced Flush CID=0x%04x handle=0x%04x skipped=%d",
+                   lcid, p_lcb->Handle(), skip_enhanced_flush);
+        }
+        if (!skip_enhanced_flush) {
+          /* The only packet type defined - 0 - Automatically-Flushable Only */
+          btsnd_hcic_enhanced_flush(p_lcb->Handle(), 0);
+        }
       }
     }
 

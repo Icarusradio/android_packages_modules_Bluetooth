@@ -279,9 +279,11 @@ bool L2CA_SetChnlFlushability(uint16_t cid, bool is_flushable) {
   return test::mock::stack_l2cap_api::L2CA_SetChnlFlushability(cid,
                                                                is_flushable);
 }
-uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush) {
+uint16_t L2CA_FlushChannel(uint16_t lcid, uint16_t num_to_flush,
+                           bool is_a2dp_media) {
   mock_function_count_map[__func__]++;
-  return test::mock::stack_l2cap_api::L2CA_FlushChannel(lcid, num_to_flush);
+  return test::mock::stack_l2cap_api::L2CA_FlushChannel(lcid, num_to_flush,
+                                                        is_a2dp_media);
 }
 bool L2CA_IsLinkEstablished(const RawAddress& bd_addr,
                             tBT_TRANSPORT transport) {

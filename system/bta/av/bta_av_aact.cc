@@ -1323,7 +1323,8 @@ void bta_av_do_close(tBTA_AV_SCB* p_scb, UNUSED_ATTR tBTA_AV_DATA* p_data) {
   p_scb->use_rtp_header_marker_bit = false;
 
   /* drop the buffers queued in L2CAP */
-  L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL);
+  L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL,
+                    p_scb->chnl == BTA_AV_CHNL_AUDIO);
 
   AVDT_CloseReq(p_scb->avdt_handle);
   /* just in case that the link is congested, link is flow controled by peer or
@@ -1921,7 +1922,8 @@ void bta_av_str_stopped(tBTA_AV_SCB* p_scb, tBTA_AV_DATA* p_data) {
 
     /* drop the audio buffers queued in L2CAP */
     if (p_data && p_data->api_stop.flush)
-      L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL);
+      L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL,
+                        p_scb->chnl == BTA_AV_CHNL_AUDIO);
   }
 
   suspend_rsp.chnl = p_scb->chnl;
@@ -2051,7 +2053,8 @@ void bta_av_reconfig(tBTA_AV_SCB* p_scb, tBTA_AV_DATA* p_data) {
       bta_av_str_stopped(p_scb, NULL);
     }
     // Drop the buffers queued in L2CAP
-    L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL);
+    L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL,
+                      p_scb->chnl == BTA_AV_CHNL_AUDIO);
     AVDT_CloseReq(p_scb->avdt_handle);
   }
 }
@@ -2721,7 +2724,8 @@ void bta_av_suspend_cont(tBTA_AV_SCB* p_scb, tBTA_AV_DATA* p_data) {
     } else {
       APPL_TRACE_ERROR("%s: suspend rejected, try close", __func__);
       /* drop the buffers queued in L2CAP */
-      L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL);
+      L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL,
+                        p_scb->chnl == BTA_AV_CHNL_AUDIO);
 
       AVDT_CloseReq(p_scb->avdt_handle);
     }
@@ -2778,7 +2782,8 @@ void bta_av_rcfg_cfm(tBTA_AV_SCB* p_scb, tBTA_AV_DATA* p_data) {
     }
     /* started flag is false when reconfigure command is sent */
     /* drop the buffers queued in L2CAP */
-    L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL);
+    L2CA_FlushChannel(p_scb->l2c_cid, L2CAP_FLUSH_CHANS_ALL,
+                      p_scb->chnl == BTA_AV_CHNL_AUDIO);
     AVDT_CloseReq(p_scb->avdt_handle);
   } else {
     /* update the codec info after rcfg cfm */

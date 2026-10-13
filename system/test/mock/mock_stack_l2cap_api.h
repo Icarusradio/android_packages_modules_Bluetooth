@@ -464,13 +464,17 @@ struct L2CA_SetChnlFlushability {
 };
 extern struct L2CA_SetChnlFlushability L2CA_SetChnlFlushability;
 // Name: L2CA_FlushChannel
-// Params: uint16_t lcid, uint16_t num_to_flush
+// Params: uint16_t lcid, uint16_t num_to_flush, bool is_a2dp_media
 // Returns: uint16_t
 struct L2CA_FlushChannel {
-  std::function<uint16_t(uint16_t lcid, uint16_t num_to_flush)> body{
-      [](uint16_t lcid, uint16_t num_to_flush) { return 0; }};
-  uint16_t operator()(uint16_t lcid, uint16_t num_to_flush) {
-    return body(lcid, num_to_flush);
+  std::function<uint16_t(uint16_t lcid, uint16_t num_to_flush,
+                         bool is_a2dp_media)>
+      body{[](uint16_t lcid, uint16_t num_to_flush, bool is_a2dp_media) {
+        return 0;
+      }};
+  uint16_t operator()(uint16_t lcid, uint16_t num_to_flush,
+                      bool is_a2dp_media) {
+    return body(lcid, num_to_flush, is_a2dp_media);
   };
 };
 extern struct L2CA_FlushChannel L2CA_FlushChannel;

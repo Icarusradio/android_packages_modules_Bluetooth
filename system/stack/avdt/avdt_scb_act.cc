@@ -1535,7 +1535,8 @@ void avdt_scb_clr_pkt(AvdtpScb* p_scb, UNUSED_ATTR tAVDT_SCB_EVT* p_data) {
     tcid = avdt_ad_type_to_tcid(AVDT_CHAN_MEDIA, p_scb);
 
     lcid = avdtp_cb.ad.rt_tbl[avdt_ccb_to_idx(p_ccb)][tcid].lcid;
-    L2CA_FlushChannel(lcid, L2CAP_FLUSH_CHANS_ALL);
+    L2CA_FlushChannel(lcid, L2CAP_FLUSH_CHANS_ALL,
+                      p_scb->stream_config.media_type == AVDT_MEDIA_TYPE_AUDIO);
   }
 
   if (p_scb->p_pkt != NULL) {
